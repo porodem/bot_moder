@@ -4,6 +4,7 @@ import sqlhelper
 import datetime
 import re
 
+
 print('- start test sql -')
 print()
 

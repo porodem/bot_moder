@@ -53,11 +53,7 @@ bot.set_my_commands([bc_block_user,bc_a,bc_q])
 #bot.set_my_commands([bc,bc_a,bc_q], types.BotCommandScope())
 
 
-#types.MenuButtonDefault('default')
 
-# try send message to user
-
-# functions for multiple usage 
 
 def check_tables(message):
     print('- - - check_tables - - - ')
@@ -107,8 +103,23 @@ def send_welcome(message):
 print(' = = = = =  member update handler = = = = = =')
 print('_')
 @bot.message_handler(content_types=["new_chat_members"])
-def new_member_comes(updated):
+def new_member_comes(message):
     print('there is new member --> ')
+    msg_json = message.json   # data that we need locates in parameter named json - it's dictionary
+    new_member = msg_json["new_chat_member"]  # get new_chat_member dict it contains tid and username
+    tid = new_member["id"]
+    print(new_member)
+    vname = new_member["username"]
+    fname = new_member["first_name"]
+    #lname = '' if "last_name" in new_member.keys() else new_member["last_name"]
+    if "last_name" in new_member:
+        lname = new_member["last_name"]
+    else:
+        lname = ''
+
+    # add member to DB
+    sqlhelper2.db_new_user(tid,vname,fname,lname)
+
     print('-end of member fucn -')
     #telebot.types.ChatMemberUpdated
 

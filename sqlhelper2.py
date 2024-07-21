@@ -28,6 +28,8 @@ def db_new_user(tid,username,fname = "",lname=""):
      cur = con.cursor()
      cur.execute(q,(tid,username,fname,lname))
 
+     # TODO add con.commit()
+
 def db_get_user(username):
      print(' - - - - - get specific user - - - - -')
      print(username)
