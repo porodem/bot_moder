@@ -27,8 +27,7 @@ def db_new_user(tid,username,fname = "",lname=""):
      q = '''INSERT INTO tg_users(telegram_id, invite_date, username, first_name, last_name) VALUES(%s, current_date, %s,%s,%s);'''
      cur = con.cursor()
      cur.execute(q,(tid,username,fname,lname))
-
-     # TODO add con.commit()
+     con.commit()
 
 def db_get_user(username):
      print(' - - - - - get specific user - - - - -')
