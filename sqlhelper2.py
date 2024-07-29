@@ -1,11 +1,13 @@
 # test postgres for MODERATOR BOT
 
 import psycopg
+from datetime import datetime, timedelta
 
 con = psycopg.connect('dbname=chat user=bering_bot host=localhost password=bering')
 
 violations_limit = 3
 current_violations = 0
+invite_date = None
 
 def db_get_users():
      print('-- get all users --')
@@ -32,7 +34,7 @@ def db_new_user(tid,username,fname = "",lname=""):
 def db_get_user(username):
      print(' - - - - - get specific user - - - - -')
      print(username)
-     q = '''SELECT telegram_id, username, first_name, last_name FROM tg_users WHERE username ~* %s '''
+     q = '''SELECT telegram_id, username, first_name, last_name, invite_date FROM tg_users WHERE username ~* %s '''
      cur = con.cursor()
      cur.execute(q,(username,))
      b = cur.fetchone()
@@ -70,6 +72,7 @@ def db_new_chat(chat_id, title):
 def db_check_violations(args):
     print('checking violation ')
     global current_violations
+    global invite_date
     current_violations = 0
     tid = args
     #user_exist = False
@@ -78,18 +81,29 @@ def db_check_violations(args):
     where telegram_id = %s
     '''
 
+    q2 = '''select vcounter, invite_date from tg_users tu 
+    left join violations v on tu.telegram_id = v.telegram_id    
+    where tu.telegram_id = %s
+    '''
+
 
     with con.cursor() as cur:
-            cur.execute(q,(tid,))
+            cur.execute(q2,(tid,))
             #cur.execute(q,(p_id,))
             b = cur.fetchone() #fetchall()
             cnt = cur.description
             print('Show 1st field:',cnt[0].name)
             #for record in b:
             #    print(record[1],record[3])
-            if b is None:
+            if b[0] is None:
                 return -1
-            current_violations = b[5]
+            current_violations = b[0]
+            invite_date = b[1]
+            safe_member_period = datetime.now().date() - timedelta(days=1)
+            if invite_date > safe_member_period:
+                 print('- - - - - - Too early violation happend: ' + str(safe_member_period))
+                 # TODO warning msg to member and ban him
+                 # TODO count total msges of member
             #user_exist = True
             print('query gets ',b)
 
@@ -109,7 +123,7 @@ def db_add_violation(tid, vname, vtext):
 
     if v != -1:
         print(' - violations plus - ')
-        db_plus_violation(tid) 
+        db_plus_violation(tid)        
     else:        
         q = '''INSERT INTO violations(telegram_id,tname,vdate,last_v_text,vcounter) VALUES(%s,%s, now(),%s,1);'''
 

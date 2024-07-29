@@ -105,6 +105,7 @@ print('_')
 @bot.message_handler(content_types=["new_chat_members"])
 def new_member_comes(message):
     print('there is new member --> ')
+    bot.reply_to(message, "Добро пожаловать! Обратите внимание, реклама и оскорбления запрещены!")
     msg_json = message.json   # data that we need locates in parameter named json - it's dictionary
     new_member = msg_json["new_chat_member"]  # get new_chat_member dict it contains tid and username
     tid = new_member["id"]
@@ -132,33 +133,37 @@ def send_welcome(message):
         bot.send_message(message.chat.id, "\U0001F916 Будем плокировать! Кого? Введите ник либо ")
         print('= = = = = Block user mode = = = = = ')
         print(list(tid_list))
-        bot.register_next_step_handler(message, ask_username_to_block)
+        bot.register_next_step_handler(message, block_one_user, 'mass block')
         #sqlhelper2.db_get_user(tid_list[1])
         #start_markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
         #start_markup.row('/start', '/help', '/hide')
     else:
         bot.reply_to(message, "You have no right to do this." )
 
-def ask_username_to_block(message):
+def block_one_user(message, event_type):
     founded_user = sqlhelper2.db_get_user(message.text)
     if founded_user is None:
         bot.send_message(message.chat.id, "Sorry can't find user with simmilar name.")
+    elif event_type == 'fresh invite':
+        print('it is for recently invited member')
+        print(list(founded_user))        
     else:
         print(list(founded_user))
         bot.send_message(message.chat.id, founded_user[1] + '. Do you really want to ban him? + if Yes')
         found_tid = founded_user[0]
         bot.register_next_step_handler(message,ask_confirm_ban, found_tid)
         
-
+# unfinished function for ban member in group of chats
 def ask_confirm_ban(message, tid):
     if message.text == '+':
         for ch in chat_list:
             print(f' - - - - - BANNED! in {ch}')
+            # TODO add exact code of banning in all of theese chats
         print(tid)
     else:
         print('user banning canceld ' + str(tid) + ' message was: ' + message.text)
 
-#
+# MAIN FILTER
 
 @bot.message_handler(regexp=".*(хуй|пизд|сука|ебан|алуп|чмо|fu|еблан|пид(о|а)|п(p|р)(о|o)д(а|a)|изготови|insta|hats|elegr).*")
 def echo_rex(message):
