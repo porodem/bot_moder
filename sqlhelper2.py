@@ -26,7 +26,7 @@ def db_get_users():
 
 def db_new_user(tid,username,fname = "",lname=""):
      print(' - Write new user to DB - - -')
-     q = '''INSERT INTO tg_users(telegram_id, invite_date, username, first_name, last_name) VALUES(%s, current_date, %s,%s,%s);'''
+     q = '''INSERT INTO tg_users(telegram_id, invite_date, username, first_name, last_name, msgs) VALUES(%s, current_date, %s,%s,%s, 0);'''
      cur = con.cursor()
      cur.execute(q,(tid,username,fname,lname))
      con.commit()
@@ -156,3 +156,10 @@ def db_hist_write(tid, vtext):
     q ='''INSERT INTO violations_hist(telegram_id, vdate, vtext) VALUES(%s, now(), %s);'''
     cur = con.cursor()
     cur.execute(q,(tid,vtext,))
+
+def db_increment_msg_counter(tid):
+     print('-- increment messages counter for user --')
+     q = '''UPDATE tg_users set msgs = msgs + 1 WHERE telegram_id = %s;'''
+     cur = con.cursor()
+     cur.execute(q,(tid,))
+     con.commit()

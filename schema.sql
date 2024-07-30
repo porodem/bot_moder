@@ -1,0 +1,1 @@
+alter table tg_users add column msgs int default 0;

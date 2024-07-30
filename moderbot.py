@@ -232,6 +232,8 @@ def attach_ls(message):
 def echo_all(message):
     print('---------- ANYTHING -----------')
     check_tables(message)
+    tid = message.from_user.id
+    sqlhelper2.db_increment_msg_counter(tid)
 
 bot.infinity_polling()
 
