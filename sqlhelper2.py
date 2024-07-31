@@ -8,6 +8,7 @@ con = psycopg.connect('dbname=chat user=bering_bot host=localhost password=berin
 violations_limit = 3
 current_violations = 0
 invite_date = None
+message_counter = 0
 
 def db_get_users():
      print('-- get all users --')
@@ -31,7 +32,7 @@ def db_new_user(tid,username,fname = "",lname=""):
      cur.execute(q,(tid,username,fname,lname))
      con.commit()
 
-def db_get_user(username):
+def db_get_user(username): 
      print(' - - - - - get specific user - - - - -')
      print(username)
      q = '''SELECT telegram_id, username, first_name, last_name, invite_date FROM tg_users WHERE username ~* %s '''
@@ -73,6 +74,7 @@ def db_check_violations(args):
     print('checking violation ')
     global current_violations
     global invite_date
+    global message_counter;
     current_violations = 0
     tid = args
     #user_exist = False
@@ -81,7 +83,7 @@ def db_check_violations(args):
     where telegram_id = %s
     '''
 
-    q2 = '''select vcounter, invite_date from tg_users tu 
+    q2 = '''select vcounter, invite_date, msgs from tg_users tu 
     left join violations v on tu.telegram_id = v.telegram_id    
     where tu.telegram_id = %s
     '''
@@ -99,12 +101,15 @@ def db_check_violations(args):
                 return -1
             current_violations = b[0]
             invite_date = b[1]
+            message_counter = b[2]
             safe_member_period = datetime.now().date() - timedelta(days=1)
             if invite_date > safe_member_period:
                  print('- - - - - - Too early violation happend: ' + str(safe_member_period))
                  # TODO warning msg to member and ban him
-                 # TODO count total msges of member
             #user_exist = True
+            if message_counter < 2:
+                 print('- - - to many messages for first violation - - -')
+                 # TODO warning msg to member and ban him
             print('query gets ',b)
 
     con.commit()
