@@ -102,14 +102,14 @@ def db_check_violations(args):
             current_violations = b[0]
             invite_date = b[1]
             message_counter = b[2]
-            safe_member_period = datetime.now().date() - timedelta(days=1)
+            safe_member_period = datetime.now().date() - timedelta(days=7)
             if invite_date > safe_member_period:
                  print('- - - - - - Too early violation happend: ' + str(safe_member_period))
-                 # TODO warning msg to member and ban him
+                 return -2
             #user_exist = True
             if message_counter < 2:
                  print('- - - to many messages for first violation - - -')
-                 # TODO warning msg to member and ban him
+                 return -2
             print('query gets ',b)
 
     con.commit()
@@ -126,9 +126,12 @@ def db_add_violation(tid, vname, vtext):
 
     db_hist_write(tid,vtext)
 
-    if v != -1:
+    if v > -1:
         print(' - violations plus - ')
-        db_plus_violation(tid)        
+        db_plus_violation(tid)    
+    elif v == -2:
+        print('- - - x x x - - -')
+        return -2
     else:        
         q = '''INSERT INTO violations(telegram_id,tname,vdate,last_v_text,vcounter) VALUES(%s,%s, now(),%s,1);'''
 

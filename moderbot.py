@@ -191,10 +191,10 @@ def echo_rex(message):
     #print( bot.get_сhat(message.chat.id)) # 'TeleBot' object has no attribute 'get_сhat'
     print('--- chat.permissions ---')
     print(message.chat.permissions)
-    ban_days = 0
+    ban_days = 3
     ban_hours = 0 #
-    ban_minutes = 3
-    unban_time = datetime.now() + timedelta(hours=ban_hours, minutes=ban_minutes)
+    ban_minutes = 0
+    unban_time = datetime.now() + timedelta(days=ban_days, hours=ban_hours, minutes=ban_minutes)
     unban_time_pretty = unban_time.strftime('%Y.%m.%d %H:%M')
 
     new_perm = types.ChatPermissions(can_send_messages=False)
@@ -205,6 +205,12 @@ def echo_rex(message):
         bot.reply_to(message,'У вас '+str(vcounter) + 'из 3 нарушений. Бан до ' + unban_time_pretty)
         bot.restrict_chat_member(message.chat.id, message.from_user.id, unban_time)
         sqlhelper2.db_violation_threshold(tid)
+    elif vcounter == -2:
+        print('- - - - BAN for too fast violation - - - -')
+        bot.reply_to(message,'Вы новенький в группе, но уже нарушили правила. Бан до ' + unban_time_pretty)
+        bot.restrict_chat_member(message.chat.id, message.from_user.id, unban_time)
+        sqlhelper2.db_violation_threshold(tid)
+        # TODO delete members message
     else:
         if vname == 'detoxicon' and vcounter ==3:
             bot.reply_to(message,f'''У вас {vcounter} из 3 нарушений. Но вам можно!
