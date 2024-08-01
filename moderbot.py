@@ -20,16 +20,10 @@ print(token, type(token))
 f.close()
 bot = telebot.TeleBot(token, parse_mode=None)
 
-#TODO it only get users on Python script starts. If new grup added without restart futher functionts don't see them
-#   think about move it for more often renewal of new users and groups(chats)
-#   maby compare day number at start and in message and refresh if it changes?
 global tid_list
 tid_list = sqlhelper2.db_get_users() # tg id of all users in chat(s)
 
 superadmins = ('detoxicon')
-
-print('- - - get users id from DB - - -')
-print(list(tid_list))
 
 global chat_list_refresh_date
 global chat_list
@@ -38,11 +32,8 @@ chat_list = sqlhelper2.db_get_chats()
 print('- - - get chats - - -')
 print(list(chat_list))
 
-#print('- - - trying ban - - -')
-#bot.ban_chat_member(-1002085056136,775803031,60,True)
-
-print(bot.get_me())
-print(types.BotCommandScope)
+#print(bot.get_me())
+#print(types.BotCommandScope)
 #print(bot.get_chat('@tbros'))
 #bot.send_message('@tbros','aaa')
 
