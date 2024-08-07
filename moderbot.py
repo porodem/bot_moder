@@ -39,8 +39,8 @@ print(list(chat_list))
 
 bc_block_user = types.BotCommand('block_user','заблокировать пользователя')
 bc_a = types.BotCommand('fun','anekdot')
-bc_q = types.BotCommand('question','ask smt')
-bot.set_my_commands([bc_block_user,bc_a,bc_q])
+#bc_q = types.BotCommand('question','ask smt')
+bot.set_my_commands([bc_block_user,bc_a])
 #bot.set_my_commands([bc,bc_a,bc_q], types.BotCommandScope())
 
 
@@ -212,11 +212,8 @@ def echo_rex(message):
     print("user id:" + str(message.from_user.id))
     #bot.reply_to(message, '''Вы хотите зарегистрировать ЛК!''')
 
-@bot.message_handler(regexp=".*топи.*")
-def echo_rex(message):
-    bot.reply_to(message, '''Вы хотите узнать ЛС!''')
 
-#regexp example 3
+# legacy func from previous project
 @bot.message_handler(regexp=".*(рикрепи|обавить).*")
 def attach_ls(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
