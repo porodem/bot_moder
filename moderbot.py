@@ -156,7 +156,7 @@ def ask_confirm_ban(message, tid):
 
 # MAIN FILTER
 
-@bot.message_handler(regexp=".*(хуй|пизд|сука|ебан|алуп|чмо|fu|еблан|пид(о|а)|п(p|р)(о|o)д(а|a)|изготови|insta|hats|elegr).*")
+@bot.message_handler(regexp=".*(хуй|пизд|сука|ебан|алуп|чмо|fu|еблан|пид(о|а)|п(p|р)(о|o)д(а|a)|изготови|insta|hats|elegr|(редлага.*зараб)).*")
 def echo_rex(message):
     #bot.send_message(message.chat.id, "Не ругайся!")
     #bot.reply_to(message,"ответ наругань")
